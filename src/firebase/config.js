@@ -14,6 +14,23 @@ const messagingSenderId = import.meta.env?.VITE_FIREBASE_MESSAGING_SENDER_ID || 
 const appId = import.meta.env?.VITE_FIREBASE_APP_ID || process.env.VUE_APP_FIREBASE_APP_ID
 const measurementId = import.meta.env?.VITE_FIREBASE_MEASUREMENT_ID || process.env.VUE_APP_FIREBASE_MEASUREMENT_ID
 
+// Validate that all required Firebase config values are present
+if (!apiKey || !authDomain || !projectId || !storageBucket || !messagingSenderId || !appId) {
+  console.error('Missing Firebase configuration values. Please check your .env file.')
+  console.error('Environment detected:', import.meta.env ? 'Vite' : 'Vue CLI')
+  console.error('Required variables:', {
+    apiKey: !!apiKey,
+    authDomain: !!authDomain,
+    projectId: !!projectId,
+    storageBucket: !!storageBucket,
+    messagingSenderId: !!messagingSenderId,
+    appId: !!appId
+  })
+} else {
+  console.log('✅ Firebase configuration loaded successfully')
+  console.log('Environment detected:', import.meta.env ? 'Vite' : 'Vue CLI')
+}
+
 const firebaseConfig = {
   apiKey: apiKey,
   authDomain: authDomain,
