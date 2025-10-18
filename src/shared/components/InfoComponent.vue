@@ -13,12 +13,12 @@
         <h2 class="headline">As versatile, as professional, as exists...</h2>
         <div class="intro-text">
           <p>Sezai Recep Güntürkün a.k.a "Tradeking", is a computer
-          engineer who always prefers to combine his work, hobbies and skills.</p>
-          <p>In present, it is undoubtful that every professionality
-          is intricated. Even though, some may see that as a "headache";</p>
-          <p>I strongly disagree with them by saying "This is an opportunity for expanding our vision."</p>
-          <h4>As a result, I will prove given thesis through my work.</h4>
-          <h4>I hope, I may reach to the pleasure of earning your upholding support during my journey &#128151;</h4>
+          engineer who always prefers to combine his work, hobbies and skills.
+          In present, it is undoubtful that every professionality
+          is intricated. Even though, some may see that as a "headache";
+          I strongly disagree with them by saying "This is an opportunity for expanding our vision."</p>
+          <h4>As a result, I will prove given thesis through my work.
+          I hope, I may reach to the pleasure of earning your upholding support during my journey &#128151;</h4>
         </div>
       </div>
     </div>
@@ -47,6 +47,24 @@ export default {
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
+  
+}
+
+.content-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: url('../../shared/assets/InfoTextFrame.png') no-repeat;
+  background-size: 70% 130%;
+  background-position: center;
+  opacity: 0.15;
+  z-index: -1;
+  pointer-events: none;
 }
 
 .background-video {
@@ -95,14 +113,11 @@ export default {
 .main-content {
   position: relative;
   z-index: 1;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
 }
 
 .intro-section {
   text-align: center;
-  margin: 2rem 0;
+  margin: 7rem 0;
 }
 
 .logo {
@@ -125,7 +140,7 @@ export default {
 }
 
 .intro-text p {
-  margin: 3rem 0;
+  margin: 7rem 0;
   font-size: 1.1rem;
 }
 

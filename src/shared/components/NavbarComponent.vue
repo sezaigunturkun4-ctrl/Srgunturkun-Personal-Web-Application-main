@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <div class="brand">
+      <div class="brand btn btn-outline-light" @click="navigateAndClose('/')">
         <img src="../assets/houseicon.png" alt="logo" class="logo" />
         <router-link to="/" class="brand-text">Home</router-link>
       </div>
@@ -11,17 +11,21 @@
       </div>
       
         <ul :class="['nav-links', { 'open': open }]">
-          <li>
-            <router-link to="/social" class="btn btn-outline-warning" @click="close">Social</router-link>
+          <li class="btn btn-outline-warning" @click="navigateAndClose('/social')">
+            <img src="../assets/SocialIcon.png" alt="logo" class="logo" />
+            <span>Social</span>
           </li>
-          <li>
-            <router-link to="/signup" class="btn btn-outline-primary" @click="close">Signup</router-link>
+          <li class="btn btn-outline-primary" @click="navigateAndClose('/signup')">
+            <img src="../assets/PaperIcon.png" alt="logo" class="logo" />
+            <span>Signup</span>
           </li>
-          <li>
-            <router-link to="/login" class="btn btn-outline-success" @click="close">Login</router-link>
+          <li class="btn btn-outline-success" @click="navigateAndClose('/login')">
+            <img src="../assets/KeyIcon.png" alt="logo" class="logo" />
+            <span>Login</span>
           </li>
-          <li v-if="isLoggedIn">
-            <router-link to="/profile" class="btn btn-outline-info" @click="close">Profile</router-link>
+          <li v-if="isLoggedIn" class="btn btn-outline-info" @click="navigateAndClose('/profile')">
+            <img src="../assets/default-avatar.png" alt="logo" class="logo" />
+            <span>Profile</span>
           </li>
         </ul>
     </div>
@@ -30,7 +34,7 @@
 
 <script>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { auth } from '../../firebase/config'
 import { onAuthStateChanged } from 'firebase/auth'
 
@@ -38,6 +42,7 @@ export default {
   name: 'NavbarComponent',
   setup() {
     const route = useRoute()
+    const router = useRouter()
     const user = ref(null)
     let unsubscribe
 
@@ -58,9 +63,14 @@ export default {
     
     const isLoggedIn = computed(() => !!user.value)
     
+    const navigateTo = (path) => {
+      router.push(path)
+    }
+    
     return {
       locationText,
-      isLoggedIn
+      isLoggedIn,
+      navigateTo
     }
   },
   data() {
@@ -71,6 +81,10 @@ export default {
   methods: {
     close() {
       this.open = false;
+    },
+    navigateAndClose(path) {
+      this.navigateTo(path);
+      this.close();
     }
   }
 }
@@ -84,6 +98,10 @@ export default {
   right: 0;
   height: 60px;
   background: #1f2937;
+  opacity: 1;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  backdrop-filter: none;
 }
 
 .container-fluid {
@@ -115,6 +133,10 @@ export default {
   display: flex;
   align-items: center;
   margin-right: auto;
+}
+
+.brand:hover {
+  background-color: #000;
 }
 .logo {
   width: 36px;
@@ -156,12 +178,52 @@ export default {
   gap: 1rem;
   margin: 0;
   padding: 0;
+  pointer-events: auto;
+}
+
+.nav-links li {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.nav-links li:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-links li span {
+  margin-left: 0.5rem;
+  color: #ffffff;
+  font-weight: 500;
 }
 .nav-link {
   color: #e5e7eb; /* gray-200 */
   text-decoration: none;
   padding: 0.5rem 0.75rem;
   border-radius: 4px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-links li {
+  pointer-events: auto;
+}
+
+.nav-links a {
+  color: #ffffff;
+  text-decoration: none;
+  opacity: 1;
+  pointer-events: auto;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: #f59e0b;
 }
 
 
@@ -180,6 +242,8 @@ export default {
     opacity: 0;
     pointer-events: none;
     transition: opacity 160ms ease, transform 160ms ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    border-top: 1px solid #374151;
   }
   .nav-links.open {
     transform: translateY(0);
