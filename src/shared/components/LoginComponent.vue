@@ -46,7 +46,19 @@
         <span v-else>Signing in...</span>
       </button>
       
-      <div v-if="error" class="alert alert-danger mt-2">{{ error }}</div>
+      <div v-if="error" class="alert alert-danger mt-2">
+        {{ error }}
+        <div v-if="showResendButton" class="mt-2">
+          <button 
+            type="button" 
+            @click="resendVerificationEmail" 
+            class="btn btn-sm btn-outline-primary"
+            :disabled="resendingEmail"
+          >
+            {{ resendingEmail ? 'Sending...' : 'Resend Verification Email' }}
+          </button>
+        </div>
+      </div>
       
       <!-- Signup Link -->
       <div class="signup-link">
@@ -73,7 +85,8 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   onAuthStateChanged,
-  signOut
+  signOut,
+  sendEmailVerification
 } from 'firebase/auth'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 
@@ -82,6 +95,9 @@ const password = ref('')
 const error = ref('')
 const user = ref(null)
 const isSigningIn = ref(false)
+const showResendButton = ref(false)
+const resendingEmail = ref(false)
+const lastFailedEmail = ref('')
 let unsubscribe
 
 // Google provider configuration
@@ -95,8 +111,11 @@ googleProvider.setCustomParameters({
 // Setup auth state listener
 onMounted(() => {
   unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    console.log('Auth state changed:', currentUser ? `User: ${currentUser.email}` : 'No user')
     user.value = currentUser
-    error.value = ''
+    if (currentUser) {
+      error.value = '' // Clear errors when user successfully logs in
+    }
   })
 })
 
@@ -107,6 +126,7 @@ onUnmounted(() => {
 
 const handleLogin = async () => {
   error.value = ''
+  showResendButton.value = false
   
   // Basic validation
   if (!email.value || !password.value) {
@@ -115,11 +135,31 @@ const handleLogin = async () => {
   }
 
   try {
-    await signInWithEmailAndPassword(auth, email.value, password.value)
+    const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value)
+    
+    // Check if email is verified for email/password accounts
+    if (userCredential.user.providerData.some(provider => provider.providerId === 'password')) {
+      if (!userCredential.user.emailVerified) {
+        // Sign out the user immediately
+        await signOut(auth)
+        lastFailedEmail.value = email.value
+        showResendButton.value = true
+        error.value = 'Please verify your email before logging in. Check your inbox for a verification link.'
+        // Don't clear the fields when login fails due to email verification
+        return
+      }
+    }
+    
+    // Only clear fields if login is successful
+    console.log('Login successful for user:', userCredential.user.email)
     email.value = ''
     password.value = ''
+    
+    // Optional: Add success feedback or navigation
+    // You might want to redirect to a specific page here
+    
   } catch (e) {
-    console.error('Login error:', e.code)
+    console.error('Login error:', e.code, e.message)
     switch (e.code) {
       case 'auth/invalid-email':
         error.value = 'Invalid email address'
@@ -133,9 +173,13 @@ const handleLogin = async () => {
       case 'auth/too-many-requests':
         error.value = 'Too many failed attempts. Please try again later'
         break
+      case 'auth/invalid-credential':
+        error.value = 'Invalid email or password'
+        break
       default:
-        error.value = 'Failed to login. Please try again.'
+        error.value = `Failed to login: ${e.message}. Please try again.`
     }
+    // Don't clear fields when there's an error, so user can try again
   }
 }
 
@@ -144,6 +188,45 @@ const handleLogout = async () => {
     await signOut(auth)
   } catch (e) {
     error.value = 'Failed to logout. Please try again.'
+  }
+}
+
+const resendVerificationEmail = async () => {
+  if (!lastFailedEmail.value) {
+    error.value = 'No email address available for resend'
+    return
+  }
+  
+  resendingEmail.value = true
+  
+  try {
+    // We need the current password to sign in temporarily
+    if (!password.value) {
+      error.value = 'Please enter your password to resend verification email'
+      resendingEmail.value = false
+      return
+    }
+    
+    // Sign in temporarily to send verification email
+    const tempCredential = await signInWithEmailAndPassword(auth, lastFailedEmail.value, password.value)
+    
+    // Send verification email
+    await sendEmailVerification(tempCredential.user)
+    
+    // Sign out immediately
+    await signOut(auth)
+    
+    error.value = 'Verification email sent! Please check your inbox and verify your email before logging in.'
+    showResendButton.value = false
+  } catch (e) {
+    console.error('Resend verification error:', e)
+    if (e.code === 'auth/wrong-password') {
+      error.value = 'Incorrect password. Please enter the correct password to resend verification email.'
+    } else {
+      error.value = 'Failed to resend verification email. Please try again.'
+    }
+  } finally {
+    resendingEmail.value = false
   }
 }
 

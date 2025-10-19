@@ -57,7 +57,7 @@
       
       <div v-if="error" class="alert alert-danger mt-2">{{ error }}</div>
       <div v-if="success" class="alert alert-success mt-2">
-        Account created successfully! Please check your email for a verification link in case you signed up with email/password.
+        Account created successfully! <strong>Please check your email and click the verification link before logging in.</strong> You cannot access your account until your email is verified.
       </div>
     </form>
   </div>
@@ -66,7 +66,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { auth, usersCollection } from '../../firebase/config'
-import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider, getRedirectResult, sendEmailVerification } from 'firebase/auth'
+import { createUserWithEmailAndPassword, updateProfile, signInWithPopup, GoogleAuthProvider, getRedirectResult, sendEmailVerification, signOut } from 'firebase/auth'
 import { doc, setDoc, getDoc } from 'firebase/firestore'
 
 // Form state
@@ -127,6 +127,8 @@ const handleSignup = async () => {
     } catch (emailError) {
       console.error('Failed to send email verification:', emailError)
       // Don't fail the signup process if email verification fails
+      error.value = 'Account created but failed to send verification email. Please try again later.'
+      return
     }
     
     try {
@@ -145,6 +147,9 @@ const handleSignup = async () => {
       error.value = 'Account created but profile setup failed. Please contact support.';
       return;
     }
+
+    // Sign out the user immediately to prevent access until email is verified
+    await signOut(auth)
 
     // Clear form and show success message with verification info
     success.value = true

@@ -54,6 +54,7 @@ const usersCollection = collection(db, 'users')
 const postsCollection = collection(db, 'posts')
 const commentsCollection = collection(db, 'comments')
 const profilesCollection = collection(db, 'profiles')
+const gamesCollection = collection(db, 'games')
 
 // User state management
 const currentUser = ref(null)
@@ -109,6 +110,7 @@ export {
   postsCollection,
   commentsCollection,
   profilesCollection,
+  gamesCollection,
   analytics,
   useUser,
   currentUser,
