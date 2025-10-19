@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-      <div class="brand btn btn-outline-light" @click="navigateAndClose('/')">
+      <div class="brand" @click="navigateAndClose('/')">
         <img src="../assets/houseicon.png" alt="logo" class="logo" />
         <router-link to="/" class="brand-text">Home</router-link>
       </div>
@@ -14,7 +14,7 @@
       <div class="dropdown-container">
         <!-- Dropdown Toggle Button -->
         <button 
-          class="dropdown-toggle btn btn-outline-light" 
+          class="dropdown-toggle" 
           @click="toggleDropdown"
           aria-label="Navigation Menu"
         >
@@ -36,7 +36,7 @@
             <img src="../assets/default-avatar.png" alt="logo" class="logo" />
             <span>User Profiles</span>
           </li>
-          <li class="dropdown-item btn btn-outline-secondary" @click="navigateAndClose('/account')">
+          <li class="dropdown-item btn btn-outline-primary" @click="navigateAndClose('/account')">
             <img src="../assets/KeyIcon.png" alt="logo" class="logo" />
             <span>Account Management</span>
           </li>
@@ -168,10 +168,19 @@ export default {
   display: flex;
   align-items: center;
   margin-right: auto;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .brand:hover {
-  background-color: #000;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 .logo {
   width: 36px;

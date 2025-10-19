@@ -9,7 +9,7 @@ node_modules
 .env.*.local
 
 #Sensitive Config Files
-src/firebase/config.js
+src/firebase/
 src/shared/utils/env.js
 .firebaserc
 firebase.json

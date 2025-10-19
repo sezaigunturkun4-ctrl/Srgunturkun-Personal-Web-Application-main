@@ -47,7 +47,6 @@ export default {
 
 /* Main content area - account for fixed navbar */
 .app-content {
-  padding-top: 80px; /* Account for 60px navbar height + extra spacing */
   min-height: 100vh;
 }
 
