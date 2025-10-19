@@ -32,17 +32,13 @@
             <img src="../assets/SocialIcon.png" alt="logo" class="logo" />
             <span>Social</span>
           </li>
-          <li class="dropdown-item btn btn-outline-primary" @click="navigateAndClose('/signup')">
-            <img src="../assets/PaperIcon.png" alt="logo" class="logo" />
-            <span>Signup</span>
-          </li>
-          <li class="dropdown-item btn btn-outline-success" @click="navigateAndClose('/login')">
-            <img src="../assets/KeyIcon.png" alt="logo" class="logo" />
-            <span>Login</span>
-          </li>
-          <li v-if="isLoggedIn" class="dropdown-item btn btn-outline-info" @click="navigateAndClose('/profile')">
+          <li class="dropdown-item btn btn-outline-info" @click="navigateAndClose('/profiles')">
             <img src="../assets/default-avatar.png" alt="logo" class="logo" />
-            <span>Profile</span>
+            <span>User Profiles</span>
+          </li>
+          <li class="dropdown-item btn btn-outline-secondary" @click="navigateAndClose('/account')">
+            <img src="../assets/KeyIcon.png" alt="logo" class="logo" />
+            <span>Account Management</span>
           </li>
         </ul>
       </div>

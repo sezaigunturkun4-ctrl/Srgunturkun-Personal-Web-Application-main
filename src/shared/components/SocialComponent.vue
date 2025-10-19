@@ -22,8 +22,8 @@
               📎 Choose Media
             </label>
             
-            <select v-model="selectedUploadGame" class="media-game" required>
-              <option value="">Select game category...</option>
+            <select v-model="selectedUploadGame" class="media-game" required :disabled="gamesLoading">
+              <option value="">{{ gamesLoading ? 'Loading games...' : 'Select game category...' }}</option>
               <option v-for="game in gameCategories" :key="game" :value="game">{{ game }}</option>
             </select>
             
@@ -114,7 +114,12 @@
             </div>
             
             <!-- Game Buttons Grid -->
-            <div v-if="showGameDropdown && !selectedGame" class="games-grid">
+            <div v-if="gamesLoading" class="games-loading">
+              <div class="loading-spinner-small"></div>
+              <p>Loading games...</p>
+            </div>
+            
+            <div v-else-if="showGameDropdown && !selectedGame" class="games-grid">
               <button 
                 v-for="game in filteredGameCategories" 
                 :key="game" 
@@ -383,7 +388,7 @@
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { auth, postsCollection, commentsCollection, profilesCollection, db } from '../../firebase/config'
+import { auth, postsCollection, commentsCollection, profilesCollection, gamesCollection, db } from '../../firebase/config'
 import { onAuthStateChanged } from 'firebase/auth'
 import defaultAvatar from '../assets/default-avatar.png'
 import UserSearchComponent from './UserSearchComponent.vue'
@@ -397,7 +402,8 @@ import {
   query,
   orderBy,
   collection,
-  getDoc
+  getDoc,
+  getDocs
 } from 'firebase/firestore'
 
 export default {
@@ -443,13 +449,8 @@ export default {
     const selectedVideoType = ref('')
     const gameSearchQuery = ref('')
     const showGameDropdown = ref(false)
-    const gameCategories = ref([
-      'Minecraft', 'Fortnite', 'Call of Duty', 'League of Legends', 'Valorant',
-      'Apex Legends', 'Roblox', 'Genshin Impact', 'Among Us', 'Fall Guys',
-      'Rocket League', 'Overwatch 2', 'Counter-Strike 2', 'Dota 2', 'FIFA',
-      'GTA V', 'Red Dead Redemption', 'Cyberpunk 2077', 'The Witcher',
-      'Elden Ring', 'Dark Souls', 'Zelda', 'Pokemon', 'Other'
-    ])
+    const gameCategories = ref([]) // Will be loaded from Firestore
+    const gamesLoading = ref(true)
     
     // Computed for filtered game categories based on search
     const filteredGameCategories = computed(() => {
@@ -465,6 +466,9 @@ export default {
     onMounted(() => {
       // Add click outside event listener
       document.addEventListener('click', handleClickOutside)
+      
+      // Load game categories from Firestore
+      loadGameCategories()
       
       const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
         user.value = currentUser
@@ -966,6 +970,81 @@ export default {
       await Promise.all(promises)
     }
 
+    // Load game categories from Firestore
+    async function loadGameCategories() {
+      try {
+        gamesLoading.value = true
+        console.log('Loading game categories from Firestore...')
+        
+        const gamesQuery = query(gamesCollection, orderBy('name', 'asc'))
+        const snapshot = await getDocs(gamesQuery)
+        
+        const games = []
+        const gameObjects = [] // Store full game objects for future use
+        
+        snapshot.forEach((doc) => {
+          const gameData = doc.data()
+          const gameObject = {
+            docId: doc.id, // Firestore document ID
+            id: gameData.id || doc.id, // Use custom ID or fallback to doc ID
+            name: gameData.name || '',
+            description: gameData.description || '',
+            developer: gameData.developer || '',
+            genre: gameData.genre || '',
+            icon: gameData.icon || '',
+            rating: gameData.rating || '',
+            releaseDate: gameData.releaseDate || '',
+            // Legacy fields for compatibility
+            displayName: gameData.displayName || gameData.name || '',
+            category: gameData.category || 'gaming',
+            isActive: gameData.isActive !== undefined ? gameData.isActive : true,
+            createdAt: gameData.createdAt,
+            createdBy: gameData.createdBy
+          }
+          
+          // Add to full objects array
+          gameObjects.push(gameObject)
+          
+          // Add name to simple array for UI compatibility
+          if (gameObject.name && gameObject.isActive !== false) {
+            games.push(gameObject.name)
+          }
+        })
+        
+        // Store both the simple names array and full objects
+        gameCategories.value = games
+        // You can access full game objects if needed in the future
+        window.gameObjectsCache = gameObjects // Optional: store for debugging
+        
+        // Always ensure 'Other' is available as fallback
+        if (!games.includes('Other')) {
+          games.push('Other')
+          gameCategories.value = games
+        }
+        
+        gamesLoading.value = false
+        
+        console.log(`✅ Loaded ${games.length} game categories with expanded structure:`, games)
+        console.log('📋 Full game objects available in cache:', gameObjects.length, 'items')
+        
+        
+      } catch (error) {
+        console.error('Error loading game categories:', error)
+        gamesLoading.value = false
+        
+        // Use fallback categories if Firestore fails
+        gameCategories.value = [
+          'Minecraft', 'Fortnite', 'Call of Duty', 'League of Legends', 'Valorant',
+          'Apex Legends', 'Roblox', 'Genshin Impact', 'Among Us', 'Fall Guys',
+          'Rocket League', 'Overwatch 2', 'Counter-Strike 2', 'Dota 2', 'FIFA',
+          'GTA V', 'Red Dead Redemption', 'Cyberpunk 2077', 'The Witcher',
+          'Elden Ring', 'Dark Souls', 'Zelda', 'Pokemon', 'Other'
+        ]
+        
+        console.log('Using fallback game categories')
+      }
+    }
+
     // Get user profile photo
     function getUserPhoto(userId) {
       return userProfiles.value[userId]?.ppUrl || defaultAvatar
@@ -1101,6 +1180,7 @@ export default {
       selectedGame,
       selectedVideoType,
       gameCategories,
+      gamesLoading,
       gameSearchQuery,
       showGameDropdown,
       filteredGameCategories,
@@ -1111,7 +1191,8 @@ export default {
       clearGameSelection,
       onGameSearchInput,
       isGameHighlighted,
-      clearFilters
+      clearFilters,
+      loadGameCategories
     }
   }
 }
@@ -1416,6 +1497,34 @@ export default {
 
 .clear-game-btn:hover {
   background: rgba(255,255,255,0.2);
+}
+
+.games-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 30px 15px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.loading-spinner-small {
+  width: 30px;
+  height: 30px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #dd7724ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.games-loading p {
+  color: #666;
+  margin: 0;
+  font-size: 0.9em;
 }
 
 .games-grid {

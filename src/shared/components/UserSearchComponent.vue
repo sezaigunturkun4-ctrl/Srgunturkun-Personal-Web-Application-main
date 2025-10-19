@@ -202,11 +202,12 @@ export default {
 <style scoped>
 .user-search-container {
   background: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  border: 1px solid #e1e1e1;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  border: 1px solid #f0f0f0;
+  max-width: 800px
 }
 
 .search-header h3 {
@@ -225,17 +226,17 @@ export default {
 .search-input {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #e1e1e1;
+  border: 2px solid #f0f0f0;
   border-radius: 25px;
   font-size: 1em;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #dd7724ff;
+  box-shadow: 0 0 0 3px rgba(221, 119, 36, 0.1);
 }
 
 .search-loading {
@@ -256,7 +257,8 @@ export default {
   padding: 30px;
   color: #666;
   background: #f8f9fa;
-  border-radius: 8px;
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
 }
 
 .results-list h4 {
@@ -270,18 +272,18 @@ export default {
   align-items: center;
   gap: 15px;
   padding: 15px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   border: 1px solid #f0f0f0;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .user-result-item:hover {
   background: #f8f9fa;
-  border-color: #667eea;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  border-color: #dd7724ff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(221, 119, 36, 0.15);
 }
 
 .user-avatar {
@@ -329,21 +331,21 @@ export default {
 
 .stat {
   font-size: 0.85em;
-  color: #667eea;
+  color: #dd7724ff;
   font-weight: 500;
 }
 
 .view-profile-btn {
   flex-shrink: 0;
-  color: #667eea;
+  color: #dd7724ff;
   font-weight: 500;
   padding: 8px 12px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
 .user-result-item:hover .view-profile-btn {
-  background: #667eea;
+  background: #dd7724ff;
   color: white;
 }
 
@@ -351,7 +353,8 @@ export default {
   margin-top: 20px;
   padding: 20px;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border-radius: 8px;
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
 }
 
 .tip-item {

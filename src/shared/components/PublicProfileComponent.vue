@@ -319,6 +319,7 @@ export default {
 
 <style scoped>
 .public-profile-container {
+  position: relative;
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;

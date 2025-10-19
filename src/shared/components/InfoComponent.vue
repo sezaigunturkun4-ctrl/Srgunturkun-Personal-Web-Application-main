@@ -1,37 +1,39 @@
 <template>
-  <div class="content-wrapper">
-    <!-- Background Video -->
-    <video autoplay muted loop playsinline class="background-video">
-      <source src="../assets/WebsiteBackgroundVideo.mp4" type="video/mp4" />
-      Your browser does not support the video tag.
-    </video>
+  <div class="info-component-root">
+    <div class="content-wrapper">
+      <!-- Background Video -->
+      <video autoplay muted loop playsinline class="background-video">
+        <source src="../assets/WebsiteBackgroundVideo.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
 
-    <!-- Main Content Section -->
-    <div class="main-content">
-      <div class="intro-section">
-        <img alt="Srgunturkun logo" src="../assets/New Project.png" class="logo">
-        <h2 class="headline">As versatile, as professional, as exists...</h2>
-        <div class="intro-text">
-          <p>Sezai Recep Güntürkün a.k.a "Tradeking", is a computer
-          engineer who always prefers to combine his work, hobbies and skills.
-          In present, it is undoubtful that every professionality
-          is intricated. Even though, some may see that as a "headache";
-          I strongly disagree with them by saying "This is an opportunity for expanding our vision."</p>
-          <h4>As a result, I will prove given thesis through my work.
-          I hope, I may reach to the pleasure of earning your upholding support during my journey &#128151;</h4>
+      <!-- Main Content Section -->
+      <div class="main-content">
+        <div class="intro-section">
+          <img alt="Srgunturkun logo" src="../assets/New Project.png" class="logo">
+          <h2 class="headline">As versatile, as professional, as exists...</h2>
+          <div class="intro-text">
+            <p>Sezai Recep Güntürkün a.k.a "Tradeking", is a computer
+            engineer who always prefers to combine his work, hobbies and skills.
+            In present, it is undoubtful that every professionality
+            is intricated. Even though, some may see that as a "headache";
+            I strongly disagree with them by saying "This is an opportunity for expanding our vision."</p>
+            <h4>As a result, I will prove given thesis through my work.
+            I hope, I may reach to the pleasure of earning your upholding support during my journey &#128151;</h4>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <!-- Social Info Section -->
-  <div class="social-section">
-    <div class="social-content">
-      <div class="social-overlay"></div>
-      <h2>Visit My Social</h2>
-      <p>Explore and interact with our gaming world.</p>
-      <router-link to="/social" class="social-button">
-        Visit our Social Media!
-      </router-link>
+    <!-- Social Info Section -->
+    <div class="social-section">
+      <div class="social-content">
+        <div class="social-overlay"></div>
+        <h2>Visit My Social</h2>
+        <p>Explore and interact with our gaming world.</p>
+        <router-link to="/social" class="social-button">
+          Visit our Social Media!
+        </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -43,6 +45,11 @@ export default {
 </script>
 
 <style scoped>
+/* Root wrapper for transition compatibility */
+.info-component-root {
+  width: 100%;
+}
+
 .content-wrapper {
   min-height: 100vh;
   position: relative;
