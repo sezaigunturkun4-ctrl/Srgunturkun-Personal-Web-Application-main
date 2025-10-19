@@ -7,7 +7,7 @@
       </div>
 
       <div class="route-display">
-        <h2>You are in the <span style="color: orange;">{{ locationText }}</span> right now!</h2>
+        <h2>Current location <span style="color: orange;">{{ locationText }}</span></h2>
       </div>
       
         <ul :class="['nav-links', { 'open': open }]">
